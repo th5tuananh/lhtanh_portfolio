@@ -10,7 +10,6 @@ export function initBackground() {
  *
  *  Driven by window.__bg = { variant, intensity, dark } — re-read on every frame.
  */
-(function () {
   const cvs = document.getElementById('bg-canvas');
   if (!cvs) return;
   const ctx = cvs.getContext('2d', { alpha: true });
