@@ -388,12 +388,12 @@ export function ECMROASChart() {
 
       {/* DEC peak badge */}
       <rect
-        x={xs[8] - 31} y={ys[8] - 23} width={60} height={16}
+        x={xs[8] - 46} y={ys[8] - 23} width={60} height={16}
         fill="rgba(232,178,58,0.15)" stroke="#E8B23A" strokeWidth="0.5"
         style={{ opacity: seen ? 1 : 0, transition: 'opacity 0.5s 2.1s' }}
       />
       <text
-        x={xs[8] - 1} y={ys[8] - 11}
+        x={xs[8] - 16} y={ys[8] - 11}
         textAnchor="middle" fontSize="9.5" fontWeight="700"
         fontFamily="JetBrains Mono, monospace" fill="#E8B23A"
         style={{ opacity: seen ? 1 : 0, transition: 'opacity 0.5s 2.1s' }}
