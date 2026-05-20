@@ -80,8 +80,8 @@ export const CONTENT = {
             { v: "55", u: "%", l: "Paid Media Share" },
           ],
           tags: ["GTM Server", "Stape.io", "CAPI", "Enhanced Conv.", "GA4", "Looker"],
-          chartTitle: "ROAS · 14-month trend",
-          chart: "roas",
+          chartTitle: "ROAS · E-Commerce Channel · APR–DEC 2025",
+          chart: "ecm-roas",
         },
         {
           idx: "02",
@@ -277,8 +277,8 @@ export const CONTENT = {
             { v: "55", u: "%", l: "Tỷ trọng Paid" },
           ],
           tags: ["GTM Server", "Stape.io", "CAPI", "Enhanced Conv.", "GA4", "Looker"],
-          chartTitle: "ROAS · xu hướng 14 tháng",
-          chart: "roas",
+          chartTitle: "ROAS · Kênh E-Commerce · APR–DEC 2025",
+          chart: "ecm-roas",
         },
         {
           idx: "02",

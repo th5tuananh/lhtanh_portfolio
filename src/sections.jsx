@@ -237,6 +237,182 @@ export function DualLineChart({ a, b, labels, labelA = 'A', labelB = 'B', height
   );
 }
 
+/* ---------- ECM ROAS CHART (Trung Son Care · FIG·01) ---------- */
+export function ECMROASChart() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { threshold: 0.3 });
+
+  const W = 600, H = 200;
+  const pad = { l: 44, r: 16, t: 24, b: 36 };
+  const iW = W - pad.l - pad.r;
+  const iH = H - pad.t - pad.b;
+
+  const data = [
+    { m: 'APR', roas: 6.51 },
+    { m: 'MAY', roas: 6.79 },
+    { m: 'JUN', roas: 6.69, ms: 1 },
+    { m: 'JUL', roas: 7.03 },
+    { m: 'AUG', roas: 7.09 },
+    { m: 'SEP', roas: 6.04, ms: 2, dip: true },
+    { m: 'OCT', roas: 7.09 },
+    { m: 'NOV', roas: 8.67 },
+    { m: 'DEC', roas: 9.85, peak: true },
+  ];
+
+  const Y_MIN = 5.5, Y_MAX = 10.5;
+  const xs = data.map((_, i) => pad.l + (i / (data.length - 1)) * iW);
+  const ys = data.map(d => pad.t + (1 - (d.roas - Y_MIN) / (Y_MAX - Y_MIN)) * iH);
+
+  const linePath = xs.map((x, i) =>
+    `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`
+  ).join(' ');
+  const areaPath = linePath
+    + ` L${xs[xs.length - 1].toFixed(1)},${(pad.t + iH).toFixed(1)}`
+    + ` L${pad.l},${(pad.t + iH).toFixed(1)} Z`;
+
+  const phaseX1 = (xs[1] + xs[2]) / 2;
+  const phaseX2 = (xs[5] + xs[6]) / 2;
+
+  const gridY = v => pad.t + (1 - (v - Y_MIN) / (Y_MAX - Y_MIN)) * iH;
+  const gridVals = [6, 7, 8, 9, 10];
+
+  return (
+    <svg ref={ref} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
+
+      {/* Phase zones */}
+      <rect x={pad.l}   y={pad.t} width={phaseX1 - pad.l}            height={iH} fill="rgba(79,138,63,0.08)" />
+      <rect x={phaseX1} y={pad.t} width={phaseX2 - phaseX1}          height={iH} fill="rgba(214,40,40,0.06)" />
+      <rect x={phaseX2} y={pad.t} width={W - pad.r - phaseX2}        height={iH} fill="rgba(232,178,58,0.09)" />
+
+      {/* Grid lines */}
+      {gridVals.map(v => (
+        <line key={v}
+          x1={pad.l} x2={W - pad.r}
+          y1={gridY(v)} y2={gridY(v)}
+          stroke="currentColor" strokeWidth="0.5" opacity="0.08"
+        />
+      ))}
+
+      {/* Y-axis labels */}
+      {gridVals.map(v => (
+        <text key={v}
+          x={pad.l - 6} y={gridY(v) + 3.5}
+          textAnchor="end" fontSize="9"
+          fontFamily="JetBrains Mono, monospace"
+          fill="currentColor" opacity="0.3"
+        >{v}×</text>
+      ))}
+
+      {/* Milestone line 1 — JUN (crimson) */}
+      <line
+        x1={xs[2]} x2={xs[2]} y1={pad.t} y2={pad.t + iH}
+        stroke="#D62828" strokeWidth="1" strokeDasharray="3,3"
+        style={{ opacity: seen ? 0.6 : 0, transition: 'opacity 0.5s 0.9s' }}
+      />
+      <rect
+        x={xs[2] - 4} y={pad.t - 6} width={8} height={8}
+        fill="#D62828"
+        style={{ opacity: seen ? 0.85 : 0, transition: 'opacity 0.4s 1.1s' }}
+      />
+
+      {/* Milestone line 2 — SEP (gold) */}
+      <line
+        x1={xs[5]} x2={xs[5]} y1={pad.t} y2={pad.t + iH}
+        stroke="#E8B23A" strokeWidth="1" strokeDasharray="3,3"
+        style={{ opacity: seen ? 0.6 : 0, transition: 'opacity 0.5s 0.9s' }}
+      />
+      <rect
+        x={xs[5] - 4} y={pad.t - 6} width={8} height={8}
+        fill="#E8B23A"
+        style={{ opacity: seen ? 0.85 : 0, transition: 'opacity 0.4s 1.1s' }}
+      />
+
+      {/* Area fill */}
+      <path d={areaPath} fill="#E8B23A"
+        opacity={seen ? 0.08 : 0}
+        style={{ transition: 'opacity 1.4s 0.4s' }}
+      />
+
+      {/* ROAS line — drawn animation */}
+      <path d={linePath}
+        fill="none" stroke="#E8B23A" strokeWidth="2.2"
+        strokeLinejoin="round" strokeLinecap="round"
+        style={{
+          strokeDasharray: 2000,
+          strokeDashoffset: seen ? 0 : 2000,
+          transition: 'stroke-dashoffset 2s cubic-bezier(.2,.7,.2,1)',
+        }}
+      />
+
+      {/* Data dots — staggered fade in */}
+      {data.map((d, i) => {
+        const delay = `${0.4 + i * 0.1}s`;
+        if (d.dip) return (
+          <circle key={i} cx={xs[i]} cy={ys[i]} r={4}
+            fill="#D62828" stroke="#D62828" strokeWidth="1.8"
+            style={{ opacity: seen ? 1 : 0, transition: `opacity 0.4s ${delay}` }}
+          />
+        );
+        if (d.peak) return (
+          <g key={i} style={{ opacity: seen ? 1 : 0, transition: `opacity 0.4s ${delay}` }}>
+            <circle cx={xs[i]} cy={ys[i]} r={5.5} fill="#E8B23A" stroke="#E8B23A" strokeWidth="1" />
+            <circle cx={xs[i]} cy={ys[i]} r={2.5} fill="currentColor" opacity="0.9" />
+          </g>
+        );
+        return (
+          <circle key={i} cx={xs[i]} cy={ys[i]} r={3}
+            fill="#E8B23A" stroke="currentColor" strokeWidth="1.5"
+            style={{ opacity: seen ? 1 : 0, transition: `opacity 0.4s ${delay}` }}
+          />
+        );
+      })}
+
+      {/* Key value annotations */}
+      <text x={xs[0]} y={ys[0] + 14}
+        textAnchor="middle" fontSize="9"
+        fontFamily="JetBrains Mono, monospace" fill="#E8B23A"
+        style={{ opacity: seen ? 0.7 : 0, transition: 'opacity 0.6s 1.8s' }}
+      >6.51×</text>
+
+      <text x={xs[5]} y={ys[5] + 14}
+        textAnchor="middle" fontSize="8"
+        fontFamily="JetBrains Mono, monospace" fill="#D62828"
+        style={{ opacity: seen ? 0.75 : 0, transition: 'opacity 0.6s 1.8s' }}
+      >6.04× ↓</text>
+
+      <text x={xs[7]} y={ys[7] - 9}
+        textAnchor="middle" fontSize="9"
+        fontFamily="JetBrains Mono, monospace" fill="#E8B23A"
+        style={{ opacity: seen ? 0.7 : 0, transition: 'opacity 0.6s 2s' }}
+      >8.67×</text>
+
+      {/* DEC peak badge */}
+      <rect
+        x={xs[8] - 31} y={ys[8] - 23} width={60} height={16}
+        fill="rgba(232,178,58,0.15)" stroke="#E8B23A" strokeWidth="0.5"
+        style={{ opacity: seen ? 1 : 0, transition: 'opacity 0.5s 2.1s' }}
+      />
+      <text
+        x={xs[8] - 1} y={ys[8] - 11}
+        textAnchor="middle" fontSize="9.5" fontWeight="700"
+        fontFamily="JetBrains Mono, monospace" fill="#E8B23A"
+        style={{ opacity: seen ? 1 : 0, transition: 'opacity 0.5s 2.1s' }}
+      >9.85× ▲</text>
+
+      {/* X-axis labels */}
+      {data.map((d, i) => (
+        <text key={i}
+          x={xs[i]} y={H - 6}
+          textAnchor="middle" fontSize="9"
+          fontFamily="JetBrains Mono, monospace"
+          fill={d.ms === 1 ? '#D62828' : (d.ms === 2 || d.peak) ? '#E8B23A' : 'currentColor'}
+          opacity={d.ms || d.peak ? 0.8 : 0.4}
+        >{d.m}</text>
+      ))}
+    </svg>
+  );
+}
+
 /* ---------- FUNNEL ---------- */
 export function FunnelChart({ stages }) {
   const ref = useRef(null);
@@ -572,6 +748,9 @@ export function Pillars({ t }) {
  *  CASES TIMELINE
  * ============================================================ */
 export function CaseChart({ kind, dark }) {
+  if (kind === 'ecm-roas') {
+    return <ECMROASChart />;
+  }
   if (kind === 'roas') {
     // ROAS trend Trung Son — 14 months
     const labels = ['Aug24','Sep','Oct','Nov','Dec','Jan25','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'];
