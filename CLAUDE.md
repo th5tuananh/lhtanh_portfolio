@@ -92,7 +92,7 @@ Trên Web UI: visualize dependency graph, xem 12 execution flows, 7 clusters, t�
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **lhtanh_portfolio** (324 symbols, 411 relationships, 14 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **lhtanh_portfolio** (355 symbols, 442 relationships, 14 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
