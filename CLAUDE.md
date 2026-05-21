@@ -31,7 +31,7 @@ src/
 
 ```bash
 npm run dev      # Start dev server
-npm run build    # Production build
+npm run build    # Production build (Vite only, ~300ms)
 npm run preview  # Preview build
 ```
 
@@ -41,6 +41,37 @@ npm run preview  # Preview build
 - Nội dung text luôn đặt trong `src/content.js` (cả EN lẫn VI)
 - CSS custom properties (`--var`) dùng cho theming, không hardcode màu
 - Components không có prop drilling sâu — data đi qua `t` (content object)
+
+## Brand Tokens
+
+```css
+--cream:   #FAF7F0   /* text on dark */
+--ink:     #111111   /* feature card bg */
+--crimson: #D62828   /* alerts, milestone 1 */
+--gold:    #E8B23A   /* primary accent, charts */
+--green:   #4F8A3F   /* positive/growth */
+```
+Fonts: `Inter` (body) + `JetBrains Mono` (labels, charts, monospace). Sharp corners — không dùng `border-radius` cho feature elements.
+
+## Deploy
+
+- **Domain:** `https://www.lhtanh.me/` (canonical)
+- **Vercel:** auto-deploy từ GitHub `main` branch
+- **Vercel subdomain:** `lhtanh-portfolio.vercel.app`
+- **Build:** Vite ES2019 target (`vite.config.js`) — cần thiết cho compatibility
+
+> ⚠️ **react-snap KHÔNG tương thích với Vercel** (thiếu `libnss3.so` cho Puppeteer 1.20.0). Không thêm lại. Prerendering có thể xem xét bằng giải pháp khác (vite-ssg, @prerenderer/renderer-jsdom) nếu cần.
+
+## SEO (đã implement)
+
+Tất cả nằm trong `index.html` (static, không cần JS render):
+- **3 JSON-LD schemas:** Person (knowsAbout, sameAs LinkedIn/GitHub), WebSite (SearchAction sitelinks), FAQPage (3 Q&A VI cho Top 0)
+- **hreflang:** EN + VI + x-default → `https://www.lhtanh.me/`
+- **Geo meta:** `geo.region: VN-CT`, `geo.placename: Cần Thơ, Vietnam`
+- **robots.txt** + **sitemap.xml** trong `/public/`
+- **vercel.json:** cache 1 năm cho `/assets/`
+
+> ⚠️ **TODO:** `sandrabruh@proton.me` trong `src/content.js` (dòng 187 EN, 384 VI) là placeholder — cần thay bằng email thật trước khi production.
 
 ---
 
