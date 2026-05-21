@@ -7,17 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "react-snap",
     "preview": "vite preview"
-  },
-  "reactSnap": {
-    "source": "dist",
-    "destination": "dist",
-    "include": ["/"],
-    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
-    "inlineCss": false,
-    "minifyHtml": false,
-    "crawl": false
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -25,7 +15,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
-    "react-snap": "^1.23.0",
     "vite": "^5.4.10"
   }
 }
