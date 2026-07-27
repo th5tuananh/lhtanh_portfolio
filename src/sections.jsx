@@ -2,12 +2,36 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 
 /* ---------- HOOKS ----------
- * Visibility detection via scroll + rAF + initial bounding-rect check.
- * Avoids IntersectionObserver — it doesn't fire reliably inside nested
- * preview iframes here. This implementation is fire-once.
+ * Fire-once visibility detection.
+ * Primary path is IntersectionObserver. A rAF + bounding-rect scan runs
+ * alongside it as a fallback (older browsers, and fast programmatic
+ * scrolling where an IO callback can be missed). Callbacks are idempotent,
+ * so either path may win.
  */
 const __watchers = new Set();
 let __tickQueued = false;
+let __sweepTimer = 0;
+
+function __fire(w) {
+  if (w.done) return;
+  w.done = true;
+  __watchers.delete(w);
+  if (__io) __io.unobserve(w.el);
+  __ioMap.delete(w.el);
+  w.cb();
+}
+
+const __ioMap = new Map();
+const __io = typeof IntersectionObserver !== 'undefined'
+  ? new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        const w = __ioMap.get(e.target);
+        if (w) __fire(w);
+      }
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.01 })
+  : null;
+
 function __scheduleTick() {
   if (__tickQueued) return;
   __tickQueued = true;
@@ -17,15 +41,24 @@ function __scheduleTick() {
     __watchers.forEach((w) => {
       if (!w.el || !w.el.isConnected) { __watchers.delete(w); return; }
       const r = w.el.getBoundingClientRect();
-      // visible if any part within viewport (with a small margin)
-      const visible = r.top < vh - (w.threshold || 60) && r.bottom > (w.threshold || 60);
-      if (visible) {
-        w.cb();
-        __watchers.delete(w);
-      }
+      // visible if any part is within the viewport (with a small margin)
+      const m = w.threshold || 60;
+      if (r.top < vh - m && r.bottom > m) __fire(w);
     });
+    __sweep();
   });
 }
+
+/* Safety net: keep polling at a low rate while anything is still hidden,
+ * so no element can end up stuck in its pre-reveal state. */
+function __sweep() {
+  if (__sweepTimer || __watchers.size === 0) return;
+  __sweepTimer = setTimeout(() => {
+    __sweepTimer = 0;
+    if (__watchers.size) __scheduleTick();
+  }, 500);
+}
+
 window.addEventListener('scroll', __scheduleTick, { passive: true });
 window.addEventListener('resize', __scheduleTick);
 // also poll a few times after load in case fonts/layout shift
@@ -33,11 +66,16 @@ for (const ms of [50, 200, 600, 1200, 2000]) setTimeout(__scheduleTick, ms);
 
 function __watch(el, cb, threshold = 60) {
   if (!el) return;
-  const w = { el, cb, threshold };
+  const w = { el, cb, threshold, done: false };
   __watchers.add(w);
+  if (__io) { __ioMap.set(el, w); __io.observe(el); }
   // immediate check (for above-the-fold elements)
   __scheduleTick();
-  return () => __watchers.delete(w);
+  return () => {
+    __watchers.delete(w);
+    __ioMap.delete(el);
+    if (__io) __io.unobserve(el);
+  };
 }
 
 export function useReveal(ref, opts = {}) {
@@ -47,6 +85,22 @@ export function useReveal(ref, opts = {}) {
     const off = __watch(el, () => el.classList.add('in'), opts.threshold ?? 60);
     return off;
   }, []);
+}
+
+/* Generic scroll-reveal wrapper. Adds `.in` once the element enters view. */
+export function Reveal({ as: Tag = 'div', className = '', delay = 0, variant = 'up', style, children, ...rest }) {
+  const ref = useRef(null);
+  useReveal(ref);
+  return (
+    <Tag
+      ref={ref}
+      className={`reveal-${variant} ${className}`.trim()}
+      style={{ transitionDelay: delay ? `${delay}s` : undefined, ...style }}
+      {...rest}
+    >
+      {children}
+    </Tag>
+  );
 }
 
 export function useInView(ref, opts = {}) {
@@ -118,7 +172,8 @@ export function SplitReveal({ text, delay = 0, stagger = 30, className = '' }) {
     <span ref={ref} className={className}>
       {parts.map((p, i) => {
         if (p === '\n') return <br key={i} />;
-        if (/^\s+$/.test(p)) return <span key={i}>&nbsp;</span>;
+        // real space (not &nbsp;) so long headings can still wrap on narrow screens
+        if (/^\s+$/.test(p)) return <span key={i} className="reveal-space"> </span>;
         return (
           <span key={i} className="reveal-word">
             {[...p].map((ch, j) => (
@@ -476,28 +531,72 @@ export function RankStrip({ ranks }) {
  *  NAV
  * ============================================================ */
 export function Nav({ active, t, lang, setLang, sections }) {
+  const [open, setOpen] = useState(false);
   const cur = sections.findIndex(s => s.id === active);
   const curIdx = Math.max(0, cur);
   const curSec = sections[curIdx] || sections[0];
+
+  // lock body scroll while the mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  const links = [
+    ['#profile', 'profile', t.nav.profile],
+    ['#pillars', 'pillars', t.nav.pillars],
+    ['#work',    'work',    t.nav.work],
+    ['#method',  'method',  t.nav.method],
+    ['#contact', 'contact', t.nav.contact],
+  ];
+
   return (
-    <nav className="nav">
-      <a href="#hero" className="brand">Anh<span className="dot">.</span></a>
-      <div className="links">
-        <a href="#profile" className={active === 'profile' ? 'active' : ''}>{t.nav.profile}</a>
-        <a href="#pillars" className={active === 'pillars' ? 'active' : ''}>{t.nav.pillars}</a>
-        <a href="#work"    className={active === 'work' ? 'active' : ''}>{t.nav.work}</a>
-        <a href="#method"  className={active === 'method' ? 'active' : ''}>{t.nav.method}</a>
-        <a href="#contact" className={active === 'contact' ? 'active' : ''}>{t.nav.contact}</a>
-      </div>
-      <div className="toggles">
-        <div className="sec-ind">
-          <span className="num">{String(curIdx + 1).padStart(2, '0')}</span>
-          <span className="lbl">{curSec.label}</span>
+    <>
+      <nav className="nav">
+        <a href="#hero" className="brand">Anh<span className="dot">.</span></a>
+        <div className="links">
+          {links.map(([href, id, label]) => (
+            <a key={id} href={href} className={active === id ? 'active' : ''}>{label}</a>
+          ))}
         </div>
-        <button className={`toggle ${lang === 'en' ? 'on' : ''}`} onClick={() => setLang('en')}>EN</button>
-        <button className={`toggle ${lang === 'vi' ? 'on' : ''}`} onClick={() => setLang('vi')}>VI</button>
+        <div className="toggles">
+          <div className="sec-ind">
+            <span className="num">{String(curIdx + 1).padStart(2, '0')}</span>
+            <span className="lbl">{curSec.label}</span>
+          </div>
+          <button className={`toggle ${lang === 'vi' ? 'on' : ''}`} onClick={() => setLang('vi')}>VI</button>
+          <button className={`toggle ${lang === 'en' ? 'on' : ''}`} onClick={() => setLang('en')}>EN</button>
+          <button
+            className={`nav-burger ${open ? 'on' : ''}`}
+            onClick={() => setOpen(o => !o)}
+            aria-label="Menu"
+            aria-expanded={open}
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+
+      <div
+        className={`nav-drawer ${open ? 'open' : ''}`}
+        onClick={() => setOpen(false)}
+        aria-hidden={!open}
+      >
+        <div className="nav-drawer-inner">
+          {links.map(([href, id, label], i) => (
+            <a
+              key={id}
+              href={href}
+              className={active === id ? 'active' : ''}
+              style={{ transitionDelay: `${0.05 + i * 0.05}s` }}
+            >
+              <span className="n">{String(i + 1).padStart(2, '0')}</span>
+              {label}
+            </a>
+          ))}
+        </div>
       </div>
-    </nav>
+    </>
   );
 }
 
@@ -576,7 +675,7 @@ export function Hero({ t, variant }) {
           <div>
             <div className="who">{t.hero.name}</div>
             <div className="who-sub">{t.hero.role}</div>
-            <p className="lead" style={{ marginTop: 18, maxWidth: '52ch' }}>
+            <p className="lead hero-lead">
               {t.hero.lead}
             </p>
           </div>
@@ -617,6 +716,21 @@ export function Marquee({ items }) {
           </span>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ *  SECTION HEAD — shared header for every section
+ * ============================================================ */
+export function SectionHead({ eyebrow, title, sub, crimson = false, split = false }) {
+  return (
+    <div className="sec-head">
+      <div className="left">
+        <Reveal as="span" variant="fade" className={`sec-num ${crimson ? 'crimson' : ''}`}>{eyebrow}</Reveal>
+        <h2>{split ? <SplitReveal text={title} stagger={28} /> : <Reveal as="span" variant="up" className="h2-line">{title}</Reveal>}</h2>
+      </div>
+      <Reveal className="right" delay={0.15}>{sub}</Reveal>
     </div>
   );
 }
@@ -668,29 +782,23 @@ export function PortraitImage({ src, alt }) {
 export function Profile({ t }) {
   return (
     <section className="s" id="profile">
-      <div className="sec-head">
-        <div className="left">
-          <span className="sec-num">{t.profile.eyebrow}</span>
-          <h2><SplitReveal text={t.profile.title} stagger={28} /></h2>
-        </div>
-        <div className="right">{t.profile.lead}</div>
-      </div>
+      <SectionHead eyebrow={t.profile.eyebrow} title={t.profile.title} sub={t.profile.lead} split />
 
       <div className="profile-grid">
         <div>
-          <p className="lead" style={{ fontSize: 17, marginBottom: 32, maxWidth: '60ch' }}>
+          <Reveal as="p" className="lead profile-quote">
             “{t.profile.quote}”
-          </p>
+          </Reveal>
 
           <div>
             {t.profile.stats.map((s, i) => (
-              <div className="bio-stat" key={i}>
+              <Reveal className="bio-stat" key={i} delay={0.06 * i}>
                 <div className="v">
                   <CountUp value={s.v} />
                   {s.u && <span className="u">{s.u}</span>}
                 </div>
                 <div className="l" dangerouslySetInnerHTML={{ __html: s.l.replace(/\*([^*]+)\*/g, '<b>$1</b>') }}></div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -701,12 +809,9 @@ export function Profile({ t }) {
             <div className="tag">2026</div>
             <PortraitImage src="portrait.png" alt="Le Hoang Tuan Anh" />
           </div>
-          <div style={{
-            marginTop: 14, display: 'flex', justifyContent: 'space-between',
-            fontSize: 11, letterSpacing: 1.5, color: 'var(--fg-soft)', textTransform: 'uppercase', fontWeight: 600,
-          }}>
+          <div className="photo-caption">
             <span>Lê Hoàng Tuấn Anh</span>
-            <span>Can Tho · 2026</span>
+            <span>Cần Thơ · 2026</span>
           </div>
         </div>
       </div>
@@ -720,24 +825,18 @@ export function Profile({ t }) {
 export function Pillars({ t }) {
   return (
     <section className="s" id="pillars">
-      <div className="sec-head">
-        <div className="left">
-          <span className="sec-num crimson">{t.pillars.eyebrow}</span>
-          <h2>{t.pillars.title}</h2>
-        </div>
-        <div className="right">{t.pillars.sub}</div>
-      </div>
+      <SectionHead eyebrow={t.pillars.eyebrow} title={t.pillars.title} sub={t.pillars.sub} crimson />
 
       <div className="pillars-row">
         {t.pillars.items.map((p, i) => (
-          <div className="pillar" key={i}>
+          <Reveal className="pillar" key={i} delay={0.1 * i}>
             <div className="num">{p.num}</div>
             <h3>{p.h}</h3>
             <p>{p.p}</p>
             <div className="tags">
               {p.tags.map((tg, j) => <span className="tag" key={j}>{tg}</span>)}
             </div>
-          </div>
+          </Reveal>
         ))}
       </div>
     </section>
@@ -831,13 +930,7 @@ export function CaseRow({ c, dark }) {
 export function Cases({ t, dark }) {
   return (
     <section className="s" id="work">
-      <div className="sec-head">
-        <div className="left">
-          <span className="sec-num crimson">{t.cases.eyebrow}</span>
-          <h2>{t.cases.title}</h2>
-        </div>
-        <div className="right">{t.cases.sub}</div>
-      </div>
+      <SectionHead eyebrow={t.cases.eyebrow} title={t.cases.title} sub={t.cases.sub} crimson />
       <div style={{ position: 'relative' }}>
         {t.cases.list.map((c, i) => <CaseRow key={i} c={c} dark={dark} />)}
       </div>
@@ -851,25 +944,15 @@ export function Cases({ t, dark }) {
 export function Methodology({ t }) {
   return (
     <section className="s" id="method">
-      <div className="sec-head">
-        <div className="left">
-          <span className="sec-num">{t.method.eyebrow}</span>
-          <h2>{t.method.title}</h2>
-        </div>
-        <div className="right">{t.method.sub}</div>
-      </div>
+      <SectionHead eyebrow={t.method.eyebrow} title={t.method.title} sub={t.method.sub} />
       <div className="flow-grid">
-        {t.method.steps.map((s, i) => {
-          const ref = useRef(null);
-          useReveal(ref);
-          return (
-            <div className="flow-cell reveal-up" ref={ref} key={i} style={{ transitionDelay: `${i * 0.1}s` }}>
-              <div className="step">{s.step}</div>
-              <div className="ttl">{s.h}</div>
-              <div className="des">{s.d}</div>
-            </div>
-          );
-        })}
+        {t.method.steps.map((s, i) => (
+          <Reveal className="flow-cell" key={i} delay={i * 0.1}>
+            <div className="step">{s.step}</div>
+            <div className="ttl">{s.h}</div>
+            <div className="des">{s.d}</div>
+          </Reveal>
+        ))}
       </div>
     </section>
   );
@@ -888,16 +971,10 @@ export function Highlights({ t }) {
   const colors = ['#D62828', '#111', '#E8B23A'];
   return (
     <section className="s" id="highlights">
-      <div className="sec-head">
-        <div className="left">
-          <span className="sec-num crimson">{t.highlights.eyebrow}</span>
-          <h2>{t.highlights.title}</h2>
-        </div>
-        <div className="right">{t.highlights.sub}</div>
-      </div>
+      <SectionHead eyebrow={t.highlights.eyebrow} title={t.highlights.title} sub={t.highlights.sub} crimson />
       <div className="hl-grid">
         {t.highlights.items.map((it, i) => (
-          <div className="hl-card" key={i}>
+          <Reveal className="hl-card" key={i} delay={0.1 * i}>
             <div className="tag">{it.tag}</div>
             <div className="v">
               <CountUp value={it.v} />
@@ -907,7 +984,7 @@ export function Highlights({ t }) {
             <div className="spark">
               <Sparkline points={sparks[i]} color={colors[i]} height={50} fill />
             </div>
-          </div>
+          </Reveal>
         ))}
       </div>
     </section>
@@ -920,35 +997,20 @@ export function Highlights({ t }) {
 export function Skills({ t }) {
   return (
     <section className="s" id="skills">
-      <div className="sec-head">
-        <div className="left">
-          <span className="sec-num">{t.skills.eyebrow}</span>
-          <h2>{t.skills.title}</h2>
-        </div>
-        <div className="right">{t.skills.sub}</div>
-      </div>
+      <SectionHead eyebrow={t.skills.eyebrow} title={t.skills.title} sub={t.skills.sub} />
       {t.skills.groups.map((g, i) => (
-        <div key={i} style={{ marginTop: i === 0 ? 0 : 36 }}>
-          <div style={{
-            fontFamily: 'JetBrains Mono, monospace',
-            fontSize: 11, letterSpacing: 2, color: 'var(--crimson)',
-            fontWeight: 700, marginBottom: 10,
-          }}>
+        <div className="skills-group" key={i}>
+          <div className="skills-cat">
             [{String(i + 1).padStart(2, '0')}] {g.cat.toUpperCase()}
           </div>
           <div className="skills-grid">
-            {g.items.map(([nm, w], j) => {
-              const ref = useRef(null);
-              useReveal(ref);
-              return (
-                <div className="skill-tile reveal-up" ref={ref} key={j}
-                  style={{ '--w': w, transitionDelay: `${j * 0.08}s` }}>
-                  <div className="cat">{g.cat}</div>
-                  <div className="nm">{nm}</div>
-                  <div className="bar"><span></span></div>
-                </div>
-              );
-            })}
+            {g.items.map(([nm, w], j) => (
+              <Reveal className="skill-tile" key={j} delay={j * 0.08} style={{ '--w': w }}>
+                <div className="cat">{g.cat}</div>
+                <div className="nm">{nm}</div>
+                <div className="bar"><span></span></div>
+              </Reveal>
+            ))}
           </div>
         </div>
       ))}
@@ -962,51 +1024,25 @@ export function Skills({ t }) {
 export function Contact({ t }) {
   return (
     <section className="s" id="contact">
-      <div className="sec-head">
-        <div className="left">
-          <span className="sec-num crimson">{t.contact.eyebrow}</span>
-          <h2><SplitReveal text={t.contact.title} stagger={50} /></h2>
-        </div>
-        <div className="right">{t.contact.lead}</div>
-      </div>
+      <SectionHead eyebrow={t.contact.eyebrow} title={t.contact.title} sub={t.contact.lead} crimson split />
 
       <div className="contact-grid">
-        <div>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12,
-          }}>
-            {t.contact.cards.map((c, i) => (
-              <div className="contact-card" key={i}>
-                <div className="lbl">{c.lbl}</div>
-                <div className="val">{c.val}</div>
-                <div className="sub">{c.sub}</div>
-              </div>
-            ))}
-          </div>
+        <div className="contact-cards">
+          {t.contact.cards.map((c, i) => (
+            <Reveal className="contact-card" key={i} delay={0.08 * i}>
+              <div className="lbl">{c.lbl}</div>
+              <div className="val">{c.val}</div>
+              <div className="sub">{c.sub}</div>
+            </Reveal>
+          ))}
         </div>
 
-        <div>
-          <div style={{
-            fontSize: 12, letterSpacing: 2, color: 'var(--crimson)',
-            fontWeight: 700, marginBottom: 12, textTransform: 'uppercase',
-          }}>● {t.contact.cta}</div>
-
-          <a
-            href="mailto:sandrabruh@proton.me"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 14,
-              padding: '20px 28px',
-              background: 'var(--crimson)',
-              color: '#fff',
-              fontSize: 18, fontWeight: 700, letterSpacing: '-0.01em',
-              transition: 'all 0.3s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.background = '#9F1F1F'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.background = 'var(--crimson)'; }}
-          >
+        <Reveal className="contact-cta" delay={0.1}>
+          <div className="cta-note">● {t.contact.cta}</div>
+          <a className="cta-btn" href="mailto:sandrabruh@proton.me">
             <span>{t.nav.contact} →</span>
           </a>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -1018,23 +1054,10 @@ export function Contact({ t }) {
 export function Footer({ t }) {
   return (
     <footer className="f">
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 30,
-        alignItems: 'end', marginBottom: 24,
-        borderBottom: '1px solid var(--line)', paddingBottom: 24,
-      }}>
-        <div style={{
-          fontSize: 11, letterSpacing: 2, color: 'var(--fg-soft)',
-          fontWeight: 600, textTransform: 'uppercase',
-        }}>{t.footer.tag}</div>
-        <div style={{
-          fontSize: 15, letterSpacing: -0.2, color: 'var(--fg)',
-          fontWeight: 600, textAlign: 'center', maxWidth: '40ch', margin: '0 auto',
-        }}>“{t.footer.quote}”</div>
-        <div style={{
-          fontSize: 11, letterSpacing: 2, color: 'var(--fg-soft)',
-          fontWeight: 600, textAlign: 'right', textTransform: 'uppercase',
-        }}>17 PAGES · 6 CASE STUDIES</div>
+      <div className="footer-top">
+        <div className="ft-tag">{t.footer.tag}</div>
+        <div className="ft-quote">“{t.footer.quote}”</div>
+        <div className="ft-tag right">17 PAGES · 5 CASE STUDIES</div>
       </div>
       <div className="big">Anh<span className="dot">.</span></div>
       <div className="meta">

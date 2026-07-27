@@ -18,7 +18,7 @@ const TWEAK_DEFAULTS = {
 };
 
 export default function App() {
-  const [lang, setLang] = useState(() => localStorage.getItem('portfolio-lang') || 'en');
+  const [lang, setLang] = useState(() => localStorage.getItem('portfolio-lang') || 'vi');
   const [active, setActive] = useState('hero');
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
@@ -27,7 +27,10 @@ export default function App() {
     initBackground();
   }, []);
 
-  useEffect(() => { localStorage.setItem('portfolio-lang', lang); }, [lang]);
+  useEffect(() => {
+    localStorage.setItem('portfolio-lang', lang);
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--font-scale', tweaks.fontScale);
@@ -77,7 +80,10 @@ export default function App() {
       const el = document.getElementById(id);
       if (!el) return;
       e.preventDefault();
-      window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+      const nav = document.querySelector('.nav');
+      const offset = (nav ? nav.offsetHeight : 64) + 16;
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     };
     document.addEventListener('click', handler);
     return () => document.removeEventListener('click', handler);

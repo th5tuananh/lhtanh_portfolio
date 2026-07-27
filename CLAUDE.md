@@ -71,7 +71,14 @@ Tất cả nằm trong `index.html` (static, không cần JS render):
 - **robots.txt** + **sitemap.xml** trong `/public/`
 - **vercel.json:** cache 1 năm cho `/assets/`
 
-> ⚠️ **TODO:** `sandrabruh@proton.me` trong `src/content.js` (dòng 187 EN, 384 VI) là placeholder — cần thay bằng email thật trước khi production.
+> ✅ `sandrabruh@proton.me` là **email thật** (user xác nhận 27/07/2026) — không phải placeholder. Xuất hiện ở `src/content.js` (EN + VI) và 2 link `mailto:` trong `src/sections.jsx` (Dock, nút CTA Contact). Đổi email thì phải sửa cả 4 chỗ.
+
+## Ngôn ngữ & Responsive
+
+- **Mặc định tiếng Việt** (`App.jsx` — `localStorage.getItem('portfolio-lang') || 'vi'`), `<html lang>` sync theo state.
+- Breakpoints: `1080px` (tablet ngang) → `900px` (nav thu thành drawer, grid 1 cột) → `720px` (mobile) → `420px` / `360px` (máy nhỏ).
+- Scroll reveal dùng IntersectionObserver + fallback rAF scan (`__watch` trong `sections.jsx`) — fire-once, có sweep 500ms để không element nào kẹt trạng thái ẩn.
+- Hover effect bị tắt trên thiết bị cảm ứng qua `@media (hover: none)`; toàn bộ animation tôn trọng `prefers-reduced-motion`.
 
 ---
 
