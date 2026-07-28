@@ -499,6 +499,42 @@ export function FunnelChart({ stages }) {
   );
 }
 
+/* ---------- HORIZONTAL BAR COMPARE ----------
+ * Bars sized by real values (no fixed taper), used for persona splits
+ * and before/after comparisons.
+ */
+export function BarCompare({ items, note }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { threshold: 0.4 });
+  const max = Math.max(...items.map(i => i.value));
+  return (
+    <div ref={ref} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {items.map((it, i) => (
+        <div key={i}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', gap: 12,
+            fontSize: 12, fontWeight: 600, marginBottom: 5,
+          }}>
+            <span>{it.label}</span>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', opacity: 0.8 }}>{it.display}</span>
+          </div>
+          <div style={{ height: 10, background: 'rgba(128,128,128,0.22)' }}>
+            <div style={{
+              height: '100%',
+              width: seen ? `${(it.value / max) * 100}%` : '0%',
+              background: it.accent || 'var(--crimson)',
+              transition: `width 0.9s cubic-bezier(.16,.84,.44,1) ${i * 0.12}s`,
+            }}></div>
+          </div>
+        </div>
+      ))}
+      {note && (
+        <div style={{ fontSize: 11, opacity: 0.6, marginTop: 2, lineHeight: 1.5 }}>{note}</div>
+      )}
+    </div>
+  );
+}
+
 /* ---------- RANK STRIP ---------- */
 export function RankStrip({ ranks }) {
   const ref = useRef(null);
@@ -857,19 +893,34 @@ export function CaseChart({ kind, dark }) {
     const b = [1.0, 1.2, 1.5, 1.7, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.4, 2.5, 2.5, 2.6]; // cost
     return <DualLineChart a={a} b={b} labels={labels} labelA="ROAS" labelB="COST (norm.)" height={220} />;
   }
-  if (kind === 'leads') {
-    const labels = ['W1','W2','W3','W4'];
-    const a = [32, 41, 48, 47];
-    const b = [12, 14, 18, 19];
-    return <DualLineChart a={a} b={b} labels={labels} labelA="LEADS" labelB="COST" height={180} />;
-  }
-  if (kind === 'funnel') {
+  if (kind === 'enocom-funnel') {
+    // ENOCOM · nguồn: dashboard lead → hợp đồng (PDF trang 09)
     return <FunnelChart stages={[
-      { label: 'Reach',     value: '480K', pct: '100%' },
-      { label: 'Engaged',   value: '52K',  pct: '11%' },
-      { label: 'Lead',      value: '1.9K', pct: '3.6%' },
-      { label: 'Qualified', value: '420',  pct: '22% of L' },
+      { label: 'Lead nhận về',            value: '4', pct: '100%' },
+      { label: 'Đủ điều kiện ngân sách',  value: '4', pct: '100%' },
+      { label: 'Hợp đồng đã ký',          value: '3', pct: '75%' },
     ]} />;
+  }
+  if (kind === 'persona') {
+    // Nội Thất Miền Tây · 168 leads chia theo nhóm khách (PDF trang 10)
+    return <BarCompare
+      items={[
+        { label: 'Thầu thợ',  value: 70, display: '70 · 42%', accent: 'var(--crimson)' },
+        { label: 'Đại lý',    value: 50, display: '50 · 30%', accent: 'var(--gold)' },
+        { label: 'Chủ nhà',   value: 48, display: '48 · 28%', accent: 'var(--green)' },
+      ]}
+      note="Mỗi nhóm cần mẫu quảng cáo và landing page riêng — tài khoản chia thành 3 nhóm chiến dịch tương ứng."
+    />;
+  }
+  if (kind === 'view-time') {
+    // ICOM Design · thời gian xem trung bình (PDF trang 11)
+    return <BarCompare
+      items={[
+        { label: 'Ảnh đơn',           value: 8,  display: '8 giây',  accent: 'var(--gray)' },
+        { label: 'Instant Experience', value: 28, display: '28 giây', accent: 'var(--crimson)' },
+      ]}
+      note="Gấp 3.5 lần thời gian xem — trải nghiệm toàn màn hình giữ khách ở lại xem nhiều góc, nhiều phối cảnh."
+    />;
   }
   if (kind === 'rank') {
     return <RankStrip ranks={[
@@ -965,7 +1016,7 @@ export function Highlights({ t }) {
   // mini sparklines for each
   const sparks = [
     [2,2.4,3.1,4,5,5.8,6.4,7.2,7.9,8.6,9.1,9.5,9.85],
-    [55,58,62,68,70,72,74,75],
+    [20,45,78,104,132,150,168],
     [80,120,160,200,260,300],
   ];
   const colors = ['#D62828', '#111', '#E8B23A'];
@@ -1057,7 +1108,7 @@ export function Footer({ t }) {
       <div className="footer-top">
         <div className="ft-tag">{t.footer.tag}</div>
         <div className="ft-quote">“{t.footer.quote}”</div>
-        <div className="ft-tag right">5 CASE STUDIES</div>
+        <div className="ft-tag right">6 CASE STUDIES</div>
       </div>
       <div className="big">Anh<span className="dot">.</span></div>
       <div className="meta">
