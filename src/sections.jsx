@@ -572,10 +572,15 @@ export function Nav({ active, t, lang, setLang, sections }) {
   const curIdx = Math.max(0, cur);
   const curSec = sections[curIdx] || sections[0];
 
-  // lock body scroll while the mobile drawer is open
+  // Lock page scroll while the mobile drawer is open.
+  // html is the scrolling element here (html+body both set overflow-x),
+  // so locking body alone does nothing — lock both.
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const root = document.documentElement;
+    const v = open ? 'hidden' : '';
+    root.style.overflow = v;
+    document.body.style.overflow = v;
+    return () => { root.style.overflow = ''; document.body.style.overflow = ''; };
   }, [open]);
 
   const links = [

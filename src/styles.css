@@ -50,7 +50,9 @@
     font-size: calc(15px * var(--font-scale));
     line-height: 1.55;
     min-height: 100vh;
-    overscroll-behavior-y: none;
+    /* KHÔNG đặt overscroll-behavior ở đây: vì html+body đều có
+     * overflow-x: hidden nên body là scroll container riêng — giá trị
+     * `none` sẽ chặn cuộn chuyển tiếp lên viewport và làm trang đứng im. */
   }
   ::selection { background: var(--crimson); color: #fff; }
   a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
