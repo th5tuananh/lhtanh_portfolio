@@ -6,7 +6,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 const PANEL_STYLES = `
-.twk-shell { position: fixed; bottom: 20px; right: 92px; z-index: 60; font-family: 'Inter', sans-serif; }
+.twk-shell { position: fixed; bottom: 24px; left: 24px; z-index: 60; font-family: 'Inter', sans-serif; }
 .twk-fab {
   width: 48px; height: 48px;
   background: var(--bg); color: var(--fg);
@@ -19,8 +19,10 @@ const PANEL_STYLES = `
 .twk-fab svg { width: 18px; height: 18px; }
 
 .twk-panel {
-  position: absolute; bottom: 60px; right: 0;
+  position: absolute; bottom: 60px; left: 0;
   width: 280px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
   background: var(--bg);
   border: 1px solid var(--line-strong);
   padding: 16px;

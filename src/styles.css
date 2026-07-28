@@ -1008,9 +1008,9 @@
     .dock { right: 14px; bottom: 14px; gap: 6px; }
     .dock .item { width: 44px; height: 44px; }
     .dock .item .tip { display: none; }
-    .twk-shell { bottom: 14px !important; right: 68px !important; }
+    .twk-shell { bottom: 14px !important; left: 16px !important; }
     .twk-fab { width: 44px !important; height: 44px !important; }
-    .twk-panel { width: min(280px, calc(100vw - 88px)) !important; }
+    .twk-panel { width: min(280px, calc(100vw - 32px)) !important; }
   }
 
   @media (max-width: 420px) {
