@@ -1057,7 +1057,7 @@ export function Footer({ t }) {
       <div className="footer-top">
         <div className="ft-tag">{t.footer.tag}</div>
         <div className="ft-quote">“{t.footer.quote}”</div>
-        <div className="ft-tag right">17 PAGES · 5 CASE STUDIES</div>
+        <div className="ft-tag right">5 CASE STUDIES</div>
       </div>
       <div className="big">Anh<span className="dot">.</span></div>
       <div className="meta">
