@@ -639,6 +639,25 @@
   .chart-shell svg { width: 100%; height: auto; display: block; }
 
   /* ============ FUNNEL / METHODOLOGY ============ */
+  .faq-list {
+    margin-top: 36px;
+    border-top: 1px solid var(--line-strong);
+  }
+  .faq-item {
+    padding: 26px 0;
+    border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px;
+    align-items: start;
+  }
+  .faq-q {
+    font-size: 19px; font-weight: 800; letter-spacing: -0.02em;
+    line-height: 1.35; text-wrap: balance;
+  }
+  .faq-a {
+    font-size: 14.5px; color: var(--fg-soft); line-height: 1.7;
+    text-wrap: pretty; max-width: 68ch;
+  }
+
   .flow-grid {
     display: grid; grid-template-columns: repeat(4, 1fr);
     gap: 0;
@@ -920,6 +939,8 @@
     .sec-head .right { max-width: 62ch; font-size: 14.5px; }
 
     .profile-grid { grid-template-columns: 1fr; gap: 40px; }
+    .faq-item { grid-template-columns: 1fr; gap: 12px; padding: 22px 0; }
+    .faq-q { font-size: 17px; }
     .profile-grid > div:last-child { order: -1; max-width: 460px; }
 
     .pillars-row { grid-template-columns: 1fr; }

@@ -3,7 +3,7 @@ import { CONTENT } from './content.js';
 import { initBackground } from './bg.js';
 import {
   Nav, TopProgress, Dock, Hero, Marquee, Profile, Pillars, Cases,
-  Methodology, Highlights, Skills, Contact, Footer,
+  Methodology, Highlights, Skills, Faq, Contact, Footer,
 } from './sections.jsx';
 import {
   TweaksPanel, TweakSection, TweakSelect, TweakSlider, TweakRadio,
@@ -48,7 +48,7 @@ export default function App() {
 
   // Section tracking via scroll
   useEffect(() => {
-    const ids = ['hero', 'profile', 'pillars', 'work', 'method', 'highlights', 'skills', 'contact'];
+    const ids = ['hero', 'profile', 'pillars', 'work', 'method', 'highlights', 'skills', 'faq', 'contact'];
     let raf = 0;
     const onScroll = () => {
       if (raf) return;
@@ -97,6 +97,7 @@ export default function App() {
     { id: 'method',  label: t.nav.method },
     { id: 'highlights', label: 'Highlights' },
     { id: 'skills', label: 'Skills' },
+    { id: 'faq', label: 'FAQ' },
     { id: 'contact', label: t.nav.contact },
   ];
 
@@ -106,15 +107,18 @@ export default function App() {
       <TopProgress />
       <Dock />
 
-      <Hero t={t} variant={tweaks.heroVariant} />
-      <Marquee items={t.marquee} />
-      <Profile t={t} />
-      <Pillars t={t} />
-      <Cases t={t} />
-      <Methodology t={t} />
-      <Highlights t={t} />
-      <Skills t={t} />
-      <Contact t={t} />
+      <main id="main">
+        <Hero t={t} variant={tweaks.heroVariant} />
+        <Marquee items={t.marquee} />
+        <Profile t={t} />
+        <Pillars t={t} />
+        <Cases t={t} />
+        <Methodology t={t} />
+        <Highlights t={t} />
+        <Skills t={t} />
+        <Faq t={t} />
+        <Contact t={t} />
+      </main>
       <Footer t={t} />
 
       <TweaksPanel title="Tweaks">

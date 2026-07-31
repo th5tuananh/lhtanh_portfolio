@@ -193,8 +193,27 @@ export const CONTENT = {
         { cat: "Build", items: [["WordPress", 0.85], ["Webflow", 0.75], ["HTML/CSS", 0.8], ["Copywriting", 0.85]] },
       ],
     },
+    faq: {
+      eyebrow: "[ 06 ] FAQ",
+      title: "Frequently asked.",
+      sub: "Short answers to what people ask most before reaching out.",
+      items: [
+        {
+          q: "Who is Le Hoang Tuan Anh?",
+          a: "Le Hoang Tuan Anh (Lê Hoàng Tuấn Anh) is a Senior Digital Marketing & Mar-Tech Specialist based in Can Tho, Vietnam, with 5+ years running multi-channel advertising (Google Ads, Meta Ads, TikTok Ads) and building measurement systems (GA4, GTM Server-Side, Facebook CAPI). Specialised in E-Commerce and Mar-Tech.",
+        },
+        {
+          q: "What digital marketing services are offered in Can Tho?",
+          a: "Digital marketing services in Can Tho cover: multi-channel advertising strategy (Google Ads, Meta Ads, TikTok Ads), server-side tracking implementation (GTM Server, Facebook CAPI, GA4 Enhanced), E-Commerce ROAS optimisation, and automated reporting systems. Reach Le Hoang Tuan Anh at www.lhtanh.id.vn.",
+        },
+        {
+          q: "What is Mar-Tech?",
+          a: "Mar-Tech (Marketing Technology) is the technology stack behind modern marketing: server-side tracking, CRM integration, data pipelines, and marketing automation. Le Hoang Tuan Anh implements Mar-Tech for E-Commerce businesses in Vietnam.",
+        },
+      ],
+    },
     contact: {
-      eyebrow: "[ 06 ] CONTACT",
+      eyebrow: "[ 07 ] CONTACT",
       title: "Let's talk.",
       lead: "Every number in this portfolio comes directly from dashboards I personally operated. Open for a screen-share demo at interview time.",
       cards: [
@@ -405,8 +424,28 @@ export const CONTENT = {
         { cat: "Xây dựng", items: [["WordPress", 0.85], ["Webflow", 0.75], ["HTML/CSS", 0.8], ["Copywriting", 0.85]] },
       ],
     },
+    faq: {
+      eyebrow: "[ 06 ] CÂU HỎI THƯỜNG GẶP",
+      title: "Câu hỏi thường gặp.",
+      sub: "Giải đáp ngắn gọn những điều được hỏi nhiều nhất trước khi liên hệ.",
+      // Nội dung phải khớp nguyên văn với FAQPage schema trong index.html.
+      items: [
+        {
+          q: "Le Hoang Tuan Anh là ai?",
+          a: "Le Hoang Tuan Anh (Lê Hoàng Tuấn Anh) là Senior Digital Marketing & Mar-Tech Specialist tại Cần Thơ, Việt Nam, với 5+ năm kinh nghiệm vận hành quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads) và xây dựng hệ thống đo lường (GA4, GTM Server-Side, Facebook CAPI). Chuyên sâu về E-Commerce và Mar-Tech.",
+        },
+        {
+          q: "Dịch vụ digital marketing tại Cần Thơ gồm những gì?",
+          a: "Dịch vụ digital marketing tại Cần Thơ bao gồm: chiến lược quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads), triển khai tracking server-side (GTM Server, Facebook CAPI, GA4 Enhanced), tối ưu ROAS E-Commerce, và xây dựng hệ thống báo cáo tự động. Liên hệ Le Hoang Tuan Anh tại www.lhtanh.id.vn.",
+        },
+        {
+          q: "Mar-Tech là gì?",
+          a: "Mar-Tech (Marketing Technology) là hệ thống công nghệ hỗ trợ marketing hiện đại: server-side tracking, CRM integration, data pipeline, và marketing automation. Le Hoang Tuan Anh chuyên triển khai Mar-Tech cho doanh nghiệp E-Commerce tại Việt Nam.",
+        },
+      ],
+    },
     contact: {
-      eyebrow: "[ 06 ] LIÊN HỆ",
+      eyebrow: "[ 07 ] LIÊN HỆ",
       title: "Cùng trao đổi.",
       lead: "Mọi con số trong portfolio đều lấy trực tiếp từ dashboard do tôi vận hành. Tôi sẵn sàng chia sẻ màn hình để minh họa cụ thể khi phỏng vấn.",
       cards: [

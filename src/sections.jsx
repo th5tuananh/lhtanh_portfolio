@@ -1082,6 +1082,27 @@ export function Skills({ t }) {
 }
 
 /* ============================================================
+ *  FAQ
+ *  Nội dung khớp nguyên văn FAQPage schema trong index.html.
+ *  Hiển thị mở sẵn (không accordion) để crawler và AI trích dẫn trực tiếp.
+ * ============================================================ */
+export function Faq({ t }) {
+  return (
+    <section className="s" id="faq">
+      <SectionHead eyebrow={t.faq.eyebrow} title={t.faq.title} sub={t.faq.sub} />
+      <div className="faq-list">
+        {t.faq.items.map((f, i) => (
+          <Reveal className="faq-item" key={i} delay={i * 0.08}>
+            <h3 className="faq-q">{f.q}</h3>
+            <p className="faq-a">{f.a}</p>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
  *  CONTACT
  * ============================================================ */
 export function Contact({ t }) {

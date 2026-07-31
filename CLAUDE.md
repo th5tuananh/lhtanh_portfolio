@@ -65,11 +65,16 @@ Fonts: `Inter` (body) + `JetBrains Mono` (labels, charts, monospace). Sharp corn
 ## SEO (đã implement)
 
 Tất cả nằm trong `index.html` (static, không cần JS render):
-- **3 JSON-LD schemas:** Person (knowsAbout, sameAs LinkedIn/GitHub), WebSite (SearchAction sitelinks), FAQPage (3 Q&A VI cho Top 0)
-- **hreflang:** EN + VI + x-default → `https://www.lhtanh.id.vn/`
+- **3 JSON-LD schemas:** Person (knowsAbout, image, sameAs LinkedIn/GitHub), WebSite (SearchAction sitelinks), FAQPage (3 Q&A VI cho Top 0)
+- **`<html lang="vi">`** + `og:locale: vi_VN` — khớp với ngôn ngữ mặc định VI
+- **Không dùng hreflang:** site one-page đổi ngôn ngữ client-side, EN và VI dùng chung một URL nên hreflang không có tác dụng. Chỉ thêm lại nếu tách `/en/` và `/vi/` thành URL riêng.
 - **Geo meta:** `geo.region: VN-CT`, `geo.placename: Cần Thơ, Vietnam`
-- **robots.txt** + **sitemap.xml** trong `/public/`
+- **robots.txt** + **sitemap.xml** trong `/public/` — sitemap chỉ có `loc` + `lastmod` (Google bỏ qua `changefreq`/`priority`)
 - **vercel.json:** cache 1 năm cho `/assets/`
+
+> ⚠️ **FAQPage schema phải khớp nguyên văn với section FAQ trên trang.** Nội dung Q&A nằm ở `content.js` → `vi.faq.items` và được render bởi `Faq` trong `sections.jsx`. Google yêu cầu nội dung FAQ hiển thị thật trên trang — sửa schema thì phải sửa `content.js` (bản VI) và ngược lại.
+
+> ⚠️ **Chưa prerender.** `dist/index.html` có `<body>` rỗng, toàn bộ nội dung do React render client-side. Googlebot chạy được JS, nhưng **GPTBot / ClaudeBot / PerplexityBot thì không** → các engine này chỉ đọc được meta + JSON-LD, không thấy nội dung trang. Muốn tối ưu GEO/AEO thật sự thì phải prerender (cần bọc guard cho `canvas` trong `bg.js`, `localStorage` trong `App.jsx`, `IntersectionObserver` trong `sections.jsx`).
 
 > ✅ `sandrabruh@proton.me` là **email thật** (user xác nhận 27/07/2026) — không phải placeholder. Xuất hiện ở `src/content.js` (EN + VI) và 2 link `mailto:` trong `src/sections.jsx` (Dock, nút CTA Contact). Đổi email thì phải sửa cả 4 chỗ.
 
