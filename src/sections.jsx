@@ -33,6 +33,7 @@ const __io = typeof IntersectionObserver !== 'undefined'
   : null;
 
 function __scheduleTick() {
+  if (typeof window === 'undefined') return; // prerender: không có rAF
   if (__tickQueued) return;
   __tickQueued = true;
   requestAnimationFrame(() => {
@@ -59,10 +60,13 @@ function __sweep() {
   }, 500);
 }
 
-window.addEventListener('scroll', __scheduleTick, { passive: true });
-window.addEventListener('resize', __scheduleTick);
-// also poll a few times after load in case fonts/layout shift
-for (const ms of [50, 200, 600, 1200, 2000]) setTimeout(__scheduleTick, ms);
+// Guard: file này được import cả lúc prerender (Node), nơi không có window.
+if (typeof window !== 'undefined') {
+  window.addEventListener('scroll', __scheduleTick, { passive: true });
+  window.addEventListener('resize', __scheduleTick);
+  // also poll a few times after load in case fonts/layout shift
+  for (const ms of [50, 200, 600, 1200, 2000]) setTimeout(__scheduleTick, ms);
+}
 
 function __watch(el, cb, threshold = 60) {
   if (!el) return;

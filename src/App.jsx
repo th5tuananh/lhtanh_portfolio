@@ -18,7 +18,12 @@ const TWEAK_DEFAULTS = {
 };
 
 export default function App() {
-  const [lang, setLang] = useState(() => localStorage.getItem('portfolio-lang') || 'vi');
+  // Lúc prerender (Node) không có localStorage → mặc định 'vi', khớp với
+  // <html lang="vi"> và FAQPage schema tiếng Việt trong index.html.
+  const [lang, setLang] = useState(() => {
+    if (typeof localStorage === 'undefined') return 'vi';
+    return localStorage.getItem('portfolio-lang') || 'vi';
+  });
   const [active, setActive] = useState('hero');
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
 

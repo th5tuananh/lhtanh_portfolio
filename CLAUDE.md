@@ -74,7 +74,22 @@ Tất cả nằm trong `index.html` (static, không cần JS render):
 
 > ⚠️ **FAQPage schema phải khớp nguyên văn với section FAQ trên trang.** Nội dung Q&A nằm ở `content.js` → `vi.faq.items` và được render bởi `Faq` trong `sections.jsx`. Google yêu cầu nội dung FAQ hiển thị thật trên trang — sửa schema thì phải sửa `content.js` (bản VI) và ngược lại.
 
-> ⚠️ **Chưa prerender.** `dist/index.html` có `<body>` rỗng, toàn bộ nội dung do React render client-side. Googlebot chạy được JS, nhưng **GPTBot / ClaudeBot / PerplexityBot thì không** → các engine này chỉ đọc được meta + JSON-LD, không thấy nội dung trang. Muốn tối ưu GEO/AEO thật sự thì phải prerender (cần bọc guard cho `canvas` trong `bg.js`, `localStorage` trong `App.jsx`, `IntersectionObserver` trong `sections.jsx`).
+## Prerender (GEO/AEO)
+
+`npm run build` = `vite build` + `node scripts/prerender.mjs`. Bước prerender sinh HTML tĩnh vào `dist/index.html` để **GPTBot / ClaudeBot / PerplexityBot** (không chạy JS) đọc được nội dung. Trước khi có bước này `<body>` rỗng hoàn toàn — 0 ký tự text.
+
+- `src/entry-server.jsx` — entry SSR, gọi `renderToString(<App />)`
+- `scripts/prerender.mjs` — build SSR vào `.ssr-tmp/`, render, chèn vào `<div id="app">`, xoá thư mục tạm
+- `npm run build:nossr` — build không prerender, dùng để đối chứng khi nghi ngờ hồi quy
+
+**Client vẫn dùng `createRoot`, không hydrate.** Cố ý: người dùng đã chọn EN hoặc đổi tweaks trong `localStorage` sẽ gây hydration mismatch. React thay thế HTML tĩnh khi JS chạy; HTML tĩnh chỉ phục vụ crawler.
+
+> ⚠️ **Guard bắt buộc cho prerender.** Code chạy ở module level hoặc trong `useState` initializer sẽ chạy trong Node (không có `window`/`localStorage`) và làm hỏng build. `useEffect` KHÔNG chạy khi prerender nên an toàn. Các guard hiện có:
+> - `sections.jsx` — `window.addEventListener` ở module level và `__scheduleTick()` bọc `typeof window !== 'undefined'`
+> - `App.jsx` — `localStorage` trong `useState` initializer, fallback `'vi'`
+> - `TweaksPanel.jsx` — đã có sẵn `try/catch`, tự trả về defaults
+>
+> Prerender mặc định render bản **tiếng Việt**, khớp `<html lang="vi">` và FAQPage schema.
 
 > ✅ `sandrabruh@proton.me` là **email thật** (user xác nhận 27/07/2026) — không phải placeholder. Xuất hiện ở `src/content.js` (EN + VI) và 2 link `mailto:` trong `src/sections.jsx` (Dock, nút CTA Contact). Đổi email thì phải sửa cả 4 chỗ.
 
