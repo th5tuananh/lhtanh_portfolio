@@ -776,16 +776,9 @@ export function SectionHead({ eyebrow, title, sub, crimson = false, split = fals
   );
 }
 
-export function PortraitImage({ src, alt }) {
-  const [status, setStatus] = useState('checking'); // checking | ok | missing
-  useEffect(() => {
-    let cancelled = false;
-    fetch(src, { method: 'HEAD' })
-      .then((r) => { if (!cancelled) setStatus(r.ok ? 'ok' : 'missing'); })
-      .catch(() => { if (!cancelled) setStatus('missing'); });
-    return () => { cancelled = true; };
-  }, [src]);
-  if (status !== 'ok') {
+export function PortraitImage({ name = 'portrait', alt }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
     return (
       <div
         style={{
@@ -799,21 +792,35 @@ export function PortraitImage({ src, alt }) {
         }}
       >
         <span>[ portrait ]</span>
-        <span style={{ opacity: 0.6 }}>
-          {status === 'checking' ? 'loading…' : 'drop portrait.png in /public/'}
-        </span>
+        <span style={{ opacity: 0.6 }}>{`drop ${name}-560.jpg in /public/`}</span>
       </div>
     );
   }
+  // Column caps around 530px, so 560w covers 1x and 1024w covers 2x/retina.
+  const sizes = '(max-width: 900px) min(92vw, 460px), (max-width: 1080px) 34vw, 530px';
   return (
-    <img
-      src={src}
-      alt={alt}
-      style={{
-        width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center',
-        display: 'block',
-      }}
-    />
+    <picture>
+      <source
+        type="image/webp"
+        sizes={sizes}
+        srcSet={`${name}-560.webp 560w, ${name}-1024.webp 1024w`}
+      />
+      <img
+        src={`${name}-560.jpg`}
+        srcSet={`${name}-560.jpg 560w, ${name}-1024.jpg 1024w`}
+        sizes={sizes}
+        alt={alt}
+        width="560"
+        height="560"
+        loading="lazy"
+        decoding="async"
+        onError={() => setFailed(true)}
+        style={{
+          width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center',
+          display: 'block',
+        }}
+      />
+    </picture>
   );
 }
 
@@ -848,7 +855,7 @@ export function Profile({ t }) {
             <div className="corner-tl"></div>
             <div className="corner-br"></div>
             <div className="tag">2026</div>
-            <PortraitImage src="portrait.png" alt="Le Hoang Tuan Anh" />
+            <PortraitImage alt="Lê Hoàng Tuấn Anh — Senior Digital Marketing & Mar-Tech Specialist, Cần Thơ" />
           </div>
           <div className="photo-caption">
             <span>Lê Hoàng Tuấn Anh</span>

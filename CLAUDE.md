@@ -55,7 +55,7 @@ Fonts: `Inter` (body) + `JetBrains Mono` (labels, charts, monospace). Sharp corn
 
 ## Deploy
 
-- **Domain:** `https://www.lhtanh.me/` (canonical)
+- **Domain:** `https://www.lhtanh.id.vn/` (canonical)
 - **Vercel:** auto-deploy từ GitHub `main` branch
 - **Vercel subdomain:** `lhtanh-portfolio.vercel.app`
 - **Build:** Vite ES2019 target (`vite.config.js`) — cần thiết cho compatibility
@@ -66,7 +66,7 @@ Fonts: `Inter` (body) + `JetBrains Mono` (labels, charts, monospace). Sharp corn
 
 Tất cả nằm trong `index.html` (static, không cần JS render):
 - **3 JSON-LD schemas:** Person (knowsAbout, sameAs LinkedIn/GitHub), WebSite (SearchAction sitelinks), FAQPage (3 Q&A VI cho Top 0)
-- **hreflang:** EN + VI + x-default → `https://www.lhtanh.me/`
+- **hreflang:** EN + VI + x-default → `https://www.lhtanh.id.vn/`
 - **Geo meta:** `geo.region: VN-CT`, `geo.placename: Cần Thơ, Vietnam`
 - **robots.txt** + **sitemap.xml** trong `/public/`
 - **vercel.json:** cache 1 năm cho `/assets/`
