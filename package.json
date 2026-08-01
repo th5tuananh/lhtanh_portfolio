@@ -6,7 +6,8 @@
   "description": "Le Hoang Tuan Anh — Senior Digital Marketing & Mar-Tech Specialist · Portfolio 2026",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
+    "build:nossr": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {

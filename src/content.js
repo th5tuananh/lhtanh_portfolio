@@ -200,15 +200,19 @@ export const CONTENT = {
       items: [
         {
           q: "Who is Le Hoang Tuan Anh?",
-          a: "Le Hoang Tuan Anh (Lê Hoàng Tuấn Anh) is a Senior Digital Marketing & Mar-Tech Specialist based in Can Tho, Vietnam, with 5+ years running multi-channel advertising (Google Ads, Meta Ads, TikTok Ads) and building measurement systems (GA4, GTM Server-Side, Facebook CAPI). Specialised in E-Commerce and Mar-Tech.",
+          a: "Le Hoang Tuan Anh is a Senior Digital Marketing & Mar-Tech Specialist with 5+ years running multi-channel advertising (Google Ads, Meta Ads, TikTok Ads) and building measurement systems (GA4, GTM, Facebook CAPI), focused on E-Commerce and Mar-Tech. Based in Can Tho, Vietnam, currently looking for a full-time role — on-site in Can Tho or Ho Chi Minh City, or fully remote — and available to start immediately.",
         },
         {
-          q: "What digital marketing services are offered in Can Tho?",
-          a: "Digital marketing services in Can Tho cover: multi-channel advertising strategy (Google Ads, Meta Ads, TikTok Ads), server-side tracking implementation (GTM Server, Facebook CAPI, GA4 Enhanced), E-Commerce ROAS optimisation, and automated reporting systems. Reach Le Hoang Tuan Anh at www.lhtanh.id.vn.",
+          q: "What type of employment are you looking for?",
+          a: "Full-time roles are the priority: on-site in Can Tho or Ho Chi Minh City, or fully remote for companies in Vietnam and abroad. Open to long-term full-time offers and available to start immediately. Alongside that I also take project-based contracts and freelance consulting, such as rebuilding a measurement setup, auditing ad accounts, or building reporting dashboards. Reach out by email or Zalo in the Contact section.",
+        },
+        {
+          q: "What areas of digital marketing do you cover?",
+          a: "Four main areas: multi-channel advertising strategy and operations (Google Ads, Meta Ads, TikTok Ads); tracking and measurement implementation (GA4, GTM, Facebook CAPI, server-side where it is genuinely needed); E-Commerce ROAS optimisation; and automated reporting systems. Deliverable both on-site and remotely.",
         },
         {
           q: "What is Mar-Tech?",
-          a: "Mar-Tech (Marketing Technology) is the technology stack behind modern marketing: server-side tracking, CRM integration, data pipelines, and marketing automation. Le Hoang Tuan Anh implements Mar-Tech for E-Commerce businesses in Vietnam.",
+          a: "Mar-Tech (Marketing Technology) is the set of technologies supporting marketing: measurement and data analysis, CRM integration, workflow automation, and tracking infrastructure. Not every business needs all of it. A small shop may only need GA4 and GTM set up correctly to make good decisions; server-side tracking or deep automation is worth the investment only once data volume, channel count and budget are large enough to justify the running cost. Matching the right level to the actual problem matters more than implementing as much as possible.",
         },
       ],
     },
@@ -431,16 +435,20 @@ export const CONTENT = {
       // Nội dung phải khớp nguyên văn với FAQPage schema trong index.html.
       items: [
         {
-          q: "Le Hoang Tuan Anh là ai?",
-          a: "Le Hoang Tuan Anh (Lê Hoàng Tuấn Anh) là Senior Digital Marketing & Mar-Tech Specialist tại Cần Thơ, Việt Nam, với 5+ năm kinh nghiệm vận hành quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads) và xây dựng hệ thống đo lường (GA4, GTM Server-Side, Facebook CAPI). Chuyên sâu về E-Commerce và Mar-Tech.",
+          q: "Lê Hoàng Tuấn Anh là ai?",
+          a: "Lê Hoàng Tuấn Anh là Senior Digital Marketing & Mar-Tech Specialist với hơn 5 năm vận hành quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads) và xây dựng hệ thống đo lường (GA4, GTM, Facebook CAPI), tập trung vào E-Commerce và Mar-Tech. Sinh sống tại Cần Thơ, đang tìm vị trí fulltime tại doanh nghiệp — làm tại văn phòng ở Cần Thơ, TP.HCM hoặc fulltime remote — và có thể bắt đầu ngay.",
         },
         {
-          q: "Dịch vụ digital marketing tại Cần Thơ gồm những gì?",
-          a: "Dịch vụ digital marketing tại Cần Thơ bao gồm: chiến lược quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads), triển khai tracking server-side (GTM Server, Facebook CAPI, GA4 Enhanced), tối ưu ROAS E-Commerce, và xây dựng hệ thống báo cáo tự động. Liên hệ Le Hoang Tuan Anh tại www.lhtanh.id.vn.",
+          q: "Đang tìm công việc theo hình thức nào?",
+          a: "Ưu tiên vị trí fulltime tại doanh nghiệp: làm tại văn phòng ở Cần Thơ, TP.HCM, hoặc fulltime remote cho công ty trong và ngoài nước. Sẵn sàng nhận offer toàn thời gian dài hạn và có thể bắt đầu ngay. Ngoài ra vẫn nhận hợp đồng theo dự án và tư vấn freelance như dựng lại hệ thống đo lường, audit tài khoản quảng cáo, xây dashboard báo cáo. Trao đổi cụ thể qua email hoặc Zalo ở mục Liên hệ.",
+        },
+        {
+          q: "Chuyên môn digital marketing gồm những mảng nào?",
+          a: "Gồm bốn nhóm chính: chiến lược và vận hành quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads); triển khai tracking và đo lường (GA4, GTM, Facebook CAPI, server-side khi thực sự cần); tối ưu ROAS cho E-Commerce; và xây dựng hệ thống báo cáo tự động. Đảm nhiệm được cả khi làm tại văn phòng lẫn làm remote.",
         },
         {
           q: "Mar-Tech là gì?",
-          a: "Mar-Tech (Marketing Technology) là hệ thống công nghệ hỗ trợ marketing hiện đại: server-side tracking, CRM integration, data pipeline, và marketing automation. Le Hoang Tuan Anh chuyên triển khai Mar-Tech cho doanh nghiệp E-Commerce tại Việt Nam.",
+          a: "Mar-Tech (Marketing Technology) là tập hợp công nghệ phục vụ marketing: đo lường và phân tích dữ liệu, kết nối CRM, tự động hoá quy trình, và hạ tầng tracking. Không phải doanh nghiệp nào cũng cần đủ các thành phần này. Một shop nhỏ có khi chỉ cần GA4 và GTM gắn đúng là đã đủ ra quyết định; server-side tracking hay automation sâu chỉ đáng đầu tư khi quy mô dữ liệu, số kênh và ngân sách đủ lớn để bù chi phí vận hành. Chọn đúng mức độ cho bài toán thực tế quan trọng hơn là triển khai càng nhiều càng tốt.",
         },
       ],
     },
