@@ -200,15 +200,15 @@ export const CONTENT = {
       items: [
         {
           q: "Who is Le Hoang Tuan Anh?",
-          a: "Le Hoang Tuan Anh is a Senior Digital Marketing & Mar-Tech Specialist based in Can Tho, Vietnam, open to both remote roles and freelance projects. 5+ years running multi-channel advertising (Google Ads, Meta Ads, TikTok Ads) and building measurement systems (GA4, GTM, Facebook CAPI), focused on E-Commerce and Mar-Tech.",
+          a: "Le Hoang Tuan Anh is a Senior Digital Marketing & Mar-Tech Specialist with 5+ years running multi-channel advertising (Google Ads, Meta Ads, TikTok Ads) and building measurement systems (GA4, GTM, Facebook CAPI), focused on E-Commerce and Mar-Tech. Based in Can Tho, Vietnam, currently looking for a full-time role — on-site in Can Tho or Ho Chi Minh City, or fully remote — and available to start immediately.",
         },
         {
-          q: "Are you available for remote or freelance work?",
-          a: "Yes. I take full-time remote roles, project-based contracts and freelance consulting, for clients in Vietnam and abroad. Engagements range from long-term campaign operations to short scoped work such as rebuilding a measurement setup, auditing ad accounts, or building reporting dashboards. Reach out by email or Zalo in the Contact section.",
+          q: "What type of employment are you looking for?",
+          a: "Full-time roles are the priority: on-site in Can Tho or Ho Chi Minh City, or fully remote for companies in Vietnam and abroad. Open to long-term full-time offers and available to start immediately. Alongside that I also take project-based contracts and freelance consulting, such as rebuilding a measurement setup, auditing ad accounts, or building reporting dashboards. Reach out by email or Zalo in the Contact section.",
         },
         {
-          q: "What digital marketing services are offered?",
-          a: "Four main areas: multi-channel advertising strategy and operations (Google Ads, Meta Ads, TikTok Ads); tracking and measurement implementation (GA4, GTM, Facebook CAPI, server-side where it is genuinely needed); E-Commerce ROAS optimisation; and automated reporting systems. Available on-site in Can Tho or remotely.",
+          q: "What areas of digital marketing do you cover?",
+          a: "Four main areas: multi-channel advertising strategy and operations (Google Ads, Meta Ads, TikTok Ads); tracking and measurement implementation (GA4, GTM, Facebook CAPI, server-side where it is genuinely needed); E-Commerce ROAS optimisation; and automated reporting systems. Deliverable both on-site and remotely.",
         },
         {
           q: "What is Mar-Tech?",
@@ -436,15 +436,15 @@ export const CONTENT = {
       items: [
         {
           q: "Lê Hoàng Tuấn Anh là ai?",
-          a: "Lê Hoàng Tuấn Anh là Senior Digital Marketing & Mar-Tech Specialist, hiện làm việc tại Cần Thơ và nhận cả vị trí remote lẫn dự án freelance. Hơn 5 năm vận hành quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads) và xây dựng hệ thống đo lường (GA4, GTM, Facebook CAPI), tập trung vào E-Commerce và Mar-Tech.",
+          a: "Lê Hoàng Tuấn Anh là Senior Digital Marketing & Mar-Tech Specialist với hơn 5 năm vận hành quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads) và xây dựng hệ thống đo lường (GA4, GTM, Facebook CAPI), tập trung vào E-Commerce và Mar-Tech. Sinh sống tại Cần Thơ, đang tìm vị trí fulltime tại doanh nghiệp — làm tại văn phòng ở Cần Thơ, TP.HCM hoặc fulltime remote — và có thể bắt đầu ngay.",
         },
         {
-          q: "Có nhận làm remote hoặc freelance không?",
-          a: "Có. Tôi nhận vị trí fulltime remote, hợp đồng theo dự án và tư vấn freelance, cho cả khách trong nước lẫn nước ngoài. Phạm vi có thể là vận hành quảng cáo dài hạn, hoặc gói dự án ngắn như dựng lại hệ thống đo lường, audit tài khoản quảng cáo, xây dashboard báo cáo. Trao đổi cụ thể qua email hoặc Zalo ở mục Liên hệ.",
+          q: "Đang tìm công việc theo hình thức nào?",
+          a: "Ưu tiên vị trí fulltime tại doanh nghiệp: làm tại văn phòng ở Cần Thơ, TP.HCM, hoặc fulltime remote cho công ty trong và ngoài nước. Sẵn sàng nhận offer toàn thời gian dài hạn và có thể bắt đầu ngay. Ngoài ra vẫn nhận hợp đồng theo dự án và tư vấn freelance như dựng lại hệ thống đo lường, audit tài khoản quảng cáo, xây dashboard báo cáo. Trao đổi cụ thể qua email hoặc Zalo ở mục Liên hệ.",
         },
         {
-          q: "Dịch vụ digital marketing gồm những gì?",
-          a: "Gồm bốn nhóm chính: chiến lược và vận hành quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads); triển khai tracking và đo lường (GA4, GTM, Facebook CAPI, server-side khi thực sự cần); tối ưu ROAS cho E-Commerce; và xây dựng hệ thống báo cáo tự động. Có thể làm trực tiếp tại Cần Thơ hoặc remote.",
+          q: "Chuyên môn digital marketing gồm những mảng nào?",
+          a: "Gồm bốn nhóm chính: chiến lược và vận hành quảng cáo đa kênh (Google Ads, Meta Ads, TikTok Ads); triển khai tracking và đo lường (GA4, GTM, Facebook CAPI, server-side khi thực sự cần); tối ưu ROAS cho E-Commerce; và xây dựng hệ thống báo cáo tự động. Đảm nhiệm được cả khi làm tại văn phòng lẫn làm remote.",
         },
         {
           q: "Mar-Tech là gì?",
